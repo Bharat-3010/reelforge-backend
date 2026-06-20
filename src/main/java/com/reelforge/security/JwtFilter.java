@@ -30,6 +30,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Allow auth APIs without token
         if (path.startsWith("/api/auth")) {
             filterChain.doFilter(request, response);
