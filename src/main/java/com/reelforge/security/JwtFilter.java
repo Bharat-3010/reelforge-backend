@@ -35,39 +35,24 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Allow auth APIs without token
         if (path.startsWith("/api/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String authHeader =
-                request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization");
 
-        String token = null;
-        String email = null;
-
-        if (authHeader != null &&
-                authHeader.startsWith("Bearer ")) {
-
-            token = authHeader.substring(7);
-
-            try {
-                email = jwtUtil.extractEmail(token);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
-        if (email != null &&
-                SecurityContextHolder.getContext()
-                        .getAuthentication() == null) {
+        String token = authHeader.substring(7);
 
-            User user = new User(
-                    email,
-                    "",
-                    Collections.emptyList()
-            );
+        try {
+            String email = jwtUtil.extractEmail(token);
+
+            User user = new User(email, "", Collections.emptyList());
 
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
@@ -77,13 +62,14 @@ public class JwtFilter extends OncePerRequestFilter {
                     );
 
             authToken.setDetails(
-                    new WebAuthenticationDetailsSource()
-                            .buildDetails(request)
+                    new WebAuthenticationDetailsSource().buildDetails(request)
             );
 
-            SecurityContextHolder
-                    .getContext()
-                    .setAuthentication(authToken);
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         filterChain.doFilter(request, response);
