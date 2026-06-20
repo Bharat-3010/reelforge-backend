@@ -20,6 +20,9 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedOrigin("http://localhost:5174");
 
+        // Production Frontend
+        config.addAllowedOrigin("https://reelforge-frontend-sandy.vercel.app");
+
         config.addAllowedHeader("*");
 
         config.addAllowedMethod("*");
