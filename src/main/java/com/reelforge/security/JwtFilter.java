@@ -35,18 +35,14 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (path.startsWith("/api/auth")) {
+        if (path.equals("/") || path.equals("/favicon.ico") || path.startsWith("/api/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String authHeader = request.getHeader("Authorization");
 
-        System.out.println("REQUEST PATH = " + path);
-        System.out.println("AUTH HEADER = " + authHeader);
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.out.println("JWT ERROR: Missing Authorization header");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -54,16 +50,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
-
             String email = jwtUtil.extractEmail(token);
 
-            System.out.println("EMAIL FROM TOKEN = " + email);
-
-            User user = new User(
-                    email,
-                    "",
-                    Collections.emptyList()
-            );
+            User user = new User(email, "", Collections.emptyList());
 
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
@@ -77,17 +66,9 @@ public class JwtFilter extends OncePerRequestFilter {
                             .buildDetails(request)
             );
 
-            SecurityContextHolder
-                    .getContext()
-                    .setAuthentication(authToken);
-
-            System.out.println("AUTHENTICATION SET SUCCESSFULLY");
+            SecurityContextHolder.getContext().setAuthentication(authToken);
 
         } catch (Exception e) {
-
-            System.out.println("JWT ERROR: Token validation failed");
-            e.printStackTrace();
-
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
