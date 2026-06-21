@@ -42,7 +42,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
+        System.out.println("REQUEST PATH = " + path);
+        System.out.println("AUTH HEADER = " + authHeader);
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("JWT ERROR: Missing Authorization header");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -50,9 +54,16 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
+
             String email = jwtUtil.extractEmail(token);
 
-            User user = new User(email, "", Collections.emptyList());
+            System.out.println("EMAIL FROM TOKEN = " + email);
+
+            User user = new User(
+                    email,
+                    "",
+                    Collections.emptyList()
+            );
 
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
@@ -62,12 +73,21 @@ public class JwtFilter extends OncePerRequestFilter {
                     );
 
             authToken.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
+                    new WebAuthenticationDetailsSource()
+                            .buildDetails(request)
             );
 
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+            SecurityContextHolder
+                    .getContext()
+                    .setAuthentication(authToken);
+
+            System.out.println("AUTHENTICATION SET SUCCESSFULLY");
 
         } catch (Exception e) {
+
+            System.out.println("JWT ERROR: Token validation failed");
+            e.printStackTrace();
+
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
