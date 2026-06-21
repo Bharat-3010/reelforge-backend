@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/ai")
+@RequestMapping("/api/ai")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class AiController {
