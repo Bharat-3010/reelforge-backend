@@ -28,8 +28,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/favicon.ico",
-//                                "/api/auth/**",
-                                "/api/ai/**"
+                                "/api/auth/**",
+//                                "/api/ai/**"
                         ).permitAll()
 
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
