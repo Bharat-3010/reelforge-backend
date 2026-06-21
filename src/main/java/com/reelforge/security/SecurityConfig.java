@@ -20,14 +20,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-
                 .cors(Customizer.withDefaults())
 
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers("/", "/favicon.ico", "/api/auth/**","/api/ai/**").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/favicon.ico",
+                                "/api/auth/**",
+                                "/api/ai/**"
+                        ).permitAll()
 
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
@@ -45,6 +48,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-
 }

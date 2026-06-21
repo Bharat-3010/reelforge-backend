@@ -35,7 +35,8 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (path.equals("/") || path.equals("/favicon.ico") || path.startsWith("/api/auth")) {
+        if (path.equals("/") || path.equals("/favicon.ico") || path.startsWith("/api/auth") ||
+                path.startsWith("/api/ai")) {
             filterChain.doFilter(request, response);
             return;
         }
