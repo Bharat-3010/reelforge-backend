@@ -42,4 +42,9 @@ public class AiController {
 
         return "Deleted Successfully";
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "AI API public test working";
+    }
 }
